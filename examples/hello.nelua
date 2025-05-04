@@ -7,8 +7,4 @@ app:any('/*', function(res: *uws_res_t, req: *uws_req_t, data: pointer): void
   uws_res_end(app.ssl, res, 'Hello', 5, false)
 end)
 
-app:listen(3000, function(listen_socket: *us_listen_socket_t, config: uws_app_listen_config_t, data: pointer): void
-    if listen_socket then
-        print(config.port)
-    end
-end)
+app:listen(3000)

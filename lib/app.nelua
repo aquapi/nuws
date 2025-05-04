@@ -2,7 +2,7 @@
 local fs = require 'nelua.utils.fs'
 
 -- Get file directory
-local dir = fs.dirname(debug.getinfo(1).source:sub(2, -9))
+local dir = os.getenv('PWD') or io.popen('cd'):read()
 
 linklib(fs.abspath('capi/libuwebsockets.so', dir))
 cinclude(fs.abspath('capi/libuwebsockets.h', dir))
@@ -10,15 +10,15 @@ cinclude(fs.abspath('capi/libuwebsockets.h', dir))
 
 require './bindings.nelua'
 
--- App init
+-- No casting for these props
 global App = @record {
   ptr: *uws_app_t,
-  ssl: integer
+  ssl: cint
 }
 
-function App.init(ssl: boolean): App
-  local useSSL = ssl and 1 or 0
-  local ptr: *uws_app_t = uws_create_app(useSSL)
+function App.init(ssl: boolean, options: us_socket_context_options_t): App
+  local useSSL: cint = ssl and 1 or 0
+  local ptr: *uws_app_t = uws_create_app(useSSL, options)
   return (@App){ ptr, useSSL }
 end
 
@@ -26,8 +26,15 @@ function App:deinit(): void
   uws_app_destroy(self.ssl, self.ptr)
 end
 
+-- Start the server
+local function default_listen_handler(listen_socket: *us_listen_socket_t, config: uws_app_listen_config_t, data: pointer): void
+  if listen_socket then
+    print('Port:', config.port)
+  end
+end
+
 function App:listen(port: integer, handler: uws_listen_handler, data: pointer): void
-  uws_app_listen(self.ssl, self.ptr, port, handler, data)
+  uws_app_listen(self.ssl, self.ptr, port, handler or default_listen_handler, data)
   uws_app_run(self.ssl, self.ptr)
 end
 
