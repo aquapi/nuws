@@ -10,6 +10,6 @@ local dir = fs.dirname(debug.getinfo(1).source:sub(2, -9))
 nldecl.generate_bindings_file {
   output_file = 'lib/bindings.nelua',
   parse_includes = {fs.abspath('../capi/libuwebsockets.h', dir)},
-  include_names = {'^uws_'}
+  include_names = {'^u(w?)s_'}
 }
 ]==]
