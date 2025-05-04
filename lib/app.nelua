@@ -38,16 +38,20 @@ function App:close(): void
   uws_app_close(self.ssl, self.ptr)
 end
 
--- Default server callback
-local function default_listen_handler(listen_socket: *us_listen_socket_t, config: uws_app_listen_config_t, data: pointer): void
-  if listen_socket then
-    print('Host', config.host or (@cstring)("127.0.0.1"))
-    print('Port:', config.port)
-  end
-end
-
 function App:listen(port: integer, handler: uws_listen_handler, data: pointer): void
-  uws_app_listen(self.ssl, self.ptr, port, handler or default_listen_handler, data)
+  uws_app_listen(
+    self.ssl,
+    self.ptr,
+    port,
+
+    handler or function (listen_socket: *us_listen_socket_t, config: uws_app_listen_config_t, data: pointer): void
+      if listen_socket then
+        print('Host', config.host or (@cstring)('127.0.0.1'))
+        print('Port:', config.port)
+        end
+      end,
+    data
+  )
   uws_app_run(self.ssl, self.ptr)
 end
 
