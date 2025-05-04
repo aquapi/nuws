@@ -1,0 +1,12 @@
+##[==[
+-- import Nelua Decl plugin and filesystem utils.
+local nldecl = require 'nelua.plugins.nldecl'
+local fs = require 'nelua.utils.fs'
+
+-- generate nelua bindings file
+nldecl.generate_bindings_file {
+  output_file = 'lib/bindings.nelua',
+  parse_includes = {fs.abspath('capi/libuwebsockets.h')},
+  include_names = {'^uws_'}
+}
+]==]

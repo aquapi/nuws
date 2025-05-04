@@ -1,0 +1,45 @@
+##[==[
+local fs = require 'nelua.utils.fs'
+
+linklib(fs.abspath('capi/libuwebsockets.so'))
+cinclude(fs.abspath('capi/libuwebsockets.h'))
+]==]
+
+require './bindings.nelua'
+
+-- No SSL app
+global App = @record {
+  ptr: *uws_app_t,
+  ssl: integer
+}
+
+function App.init(ssl: boolean): App
+  local useSSL = ssl and 1 or 0
+  local ptr: *uws_app_t = uws_create_app(useSSL)
+  return (@App){ ptr, useSSL }
+end
+
+function App:deinit(): void
+  uws_app_destroy(self.ssl, self.ptr)
+end
+
+function App:listen(port: integer, handler: uws_listen_handler, data: pointer): void
+  uws_app_listen(self.ssl, self.ptr, port, handler, data)
+  uws_app_run(self.ssl, self.ptr)
+end
+
+function App:get(path: string, handler: uws_method_handler, data: pointer): void
+  uws_app_get(self.ssl, self.ptr, path, handler, data)
+end
+
+local app = App.init()
+
+app:get('/*', function(res: *uws_res_t, req: *uws_req_t, data: pointer): void
+  uws_res_end(app.ssl, res, 'Hello CAPI!', 11, false)
+end)
+
+app:listen(3000, function(listen_socket: *us_listen_socket_t, config: uws_app_listen_config_t, data: pointer): void
+    if listen_socket then
+        print(config.port)
+    end
+end)
