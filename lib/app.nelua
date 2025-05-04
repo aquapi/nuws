@@ -10,25 +10,38 @@ cinclude(fs.abspath('capi/libuwebsockets.h', dir))
 
 require './bindings.nelua'
 
+-- Namespacing
+global uws = @record {}
+
 -- No casting for these props
-global App = @record {
+local App = @record {
   ptr: *uws_app_t,
   ssl: cint
 }
+global uws.App = App
 
-function App.init(ssl: boolean, options: us_socket_context_options_t): App
+-- Initialization
+global function createApp(ssl: boolean, options: us_socket_context_options_t): App
   local useSSL: cint = ssl and 1 or 0
   local ptr: *uws_app_t = uws_create_app(useSSL, options)
   return (@App){ ptr, useSSL }
 end
+global uws.createApp = createApp
 
+-- Destroy the app instance
 function App:deinit(): void
   uws_app_destroy(self.ssl, self.ptr)
 end
 
--- Start the server
+-- Close all sockets
+function App:close(): void
+  uws_app_close(self.ssl, self.ptr)
+end
+
+-- Default server callback
 local function default_listen_handler(listen_socket: *us_listen_socket_t, config: uws_app_listen_config_t, data: pointer): void
   if listen_socket then
+    print('Host', config.host or (@cstring)("127.0.0.1"))
     print('Port:', config.port)
   end
 end

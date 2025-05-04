@@ -1,7 +1,10 @@
+##[==[
+  cflags '-Ofast'
+]==]
+
 require '../lib/app.nelua'
 
--- Test
-local app = App.init()
+local app = uws.createApp()
 
 app:any('/*', function(res: *uws_res_t, req: *uws_req_t, data: pointer): void
   uws_res_end(app.ssl, res, 'Hello', 5, false)
