@@ -1,8 +1,13 @@
 ##[==[
 local fs = require 'nelua.utils.fs'
 
-linklib(fs.abspath('capi/libuwebsockets.so'))
-cinclude(fs.abspath('capi/libuwebsockets.h'))
+-- Get file directory
+require 'io'
+require 'os'
+local dir = os.getenv('PWD') or io.popen('cd'):read()
+
+linklib(fs.abspath('capi/libuwebsockets.so', dir))
+cinclude(fs.abspath('capi/libuwebsockets.h', dir))
 ]==]
 
 require './bindings.nelua'
