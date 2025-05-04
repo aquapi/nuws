@@ -2,9 +2,7 @@
 local fs = require 'nelua.utils.fs'
 
 -- Get file directory
-require 'io'
-require 'os'
-local dir = os.getenv('PWD') or io.popen('cd'):read()
+local dir = fs.dirname(debug.getinfo(1).source:sub(2, -9))
 
 linklib(fs.abspath('capi/libuwebsockets.so', dir))
 cinclude(fs.abspath('capi/libuwebsockets.h', dir))

@@ -4,14 +4,12 @@ local nldecl = require 'nelua.plugins.nldecl'
 local fs = require 'nelua.utils.fs'
 
 -- Get file directory
-require 'io'
-require 'os'
-local dir = os.getenv('PWD') or io.popen('cd'):read()
+local dir = fs.dirname(debug.getinfo(1).source:sub(2, -9))
 
 -- generate nelua bindings file
 nldecl.generate_bindings_file {
   output_file = 'lib/bindings.nelua',
-  parse_includes = {fs.abspath('capi/libuwebsockets.h', dir)},
+  parse_includes = {fs.abspath('../capi/libuwebsockets.h', dir)},
   include_names = {'^uws_'}
 }
 ]==]
