@@ -8,10 +8,6 @@ local dir = getdir()
 
 return {
   dirname = getdir,
-  header = function()
-    return fs.abspath('../capi/libuwebsockets.h', dir)
-  end,
-  lib = function()
-    return fs.abspath('../capi/libuwebsockets.so', dir)
-  end
+  header = fs.abspath('../capi/libuwebsockets.h', dir),
+  lib = fs.abspath('../capi/libuwebsockets.so', dir)
 }

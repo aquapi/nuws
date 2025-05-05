@@ -4,7 +4,7 @@ local utils = require './utils.lua'
 -- generate nelua bindings file
 require('nelua.plugins.nldecl').generate_bindings_file {
   output_file = 'lib/bindings.nelua',
-  parse_includes = {cinclude(utils.header())},
+  parse_includes = {utils.header},
   include_names = {'^u(w?)s_'}
 }
 ]==]
