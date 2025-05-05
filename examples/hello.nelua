@@ -6,11 +6,14 @@ local uws = require '../lib/main.nelua'
 
 local app = uws.app()
 
-app:any('/*', function(res: *uws.Response, req: *uws.Request, dat: pointer): void
-  res:write_header('Cookie', 'a=b')
-  res:write_header('Id', (@uint64)(12))
-  res:finalize('Hello')
-end)
+app:any(
+  '/*',
+  function(res: *uws.response, req: *uws.request, dat: pointer): void
+    res:write_header('Cookie', 'a=b')
+    res:write_header('Id', (@uint64)(12))
+    res:finalize('Hello')
+  end
+)
 
 app:listen({
   port = 3000

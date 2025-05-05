@@ -11,12 +11,11 @@ local uws = @record {}
 return uws
 
 -- Initialization
-local App = require './app.nelua'
+local app = require './app.nelua'
 
-local uws.App = App
-function uws.app(options: us_socket_context_options_t): *App
+function uws.app(options: us_socket_context_options_t): *app
   return uws_create_app(0, options)
 end
 
-local uws.Request = require './request.nelua'
-local uws.Response = require './response.nelua'
+local uws.request = require './request.nelua'
+local uws.response = require './response.nelua'

@@ -1,40 +1,40 @@
 require './bindings.nelua'
 
 -- Describe a request
-local Request = uws_req_t
-return Request
+local request = uws_req_t
+return request
 
-function Request:method(): string
+function request:method(): string
   local str: string
   str.size = uws_req_get_case_sensitive_method(self, &str.data)
   return str
 end
 
-function Request:header(name: string): string
+function request:header(name: string): string
   local str: string
   str.size = uws_req_get_header(self, name.data, name.size, &str.data)
   return str
 end
 
-function Request:path(): string
+function request:path(): string
   local str: string
   str.size = uws_req_get_url(self, &str.data)
   return str
 end
 
-function Request:full_path(): string
+function request:full_path(): string
   local str: string
   str.size = uws_req_get_full_url(self, &str.data)
   return str
 end
 
-function Request:param(idx: uint16): string
+function request:param(idx: uint16): string
   local str: string
   str.size = uws_req_get_parameter(self, idx, &str.data)
   return str
 end
 
-function Request:query(name: string): string
+function request:query(name: string): string
   local str: string
   str.size = uws_req_get_query(self, name.data, name.size, &str.data)
   return str
