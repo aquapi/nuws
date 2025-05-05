@@ -1,0 +1,65 @@
+##[==[
+local utils = require './utils.lua'
+
+linklib(utils.lib())
+cinclude(utils.header())
+]==]
+
+require './bindings.nelua'
+require 'C.stdio'
+require 'string'
+
+local Request = require './request.nelua'
+local Response = require './response.nelua'
+
+-- No casting for these props
+local App = uws_app_t
+return App
+
+-- Destroy the app instance
+function App:deinit(): void
+  uws_app_destroy(0, self)
+end
+
+-- Close all sockets
+function App:close(): void
+  uws_app_close(0, self)
+end
+
+-- Start the server
+function App:listen(options: uws_app_listen_config_t, handler: uws_listen_handler, data: pointer): void
+  options.port = options.port or 3000
+  options.host = options.host or (@cstring)('127.0.0.1')
+
+  uws_app_listen_with_config(
+    0, self, options,
+
+    handler or function (s: *us_listen_socket_t, config: uws_app_listen_config_t, data: pointer): void
+      if s then
+        C.printf('Host: %s\n', config.host)
+        C.printf('Port: %i\n', config.port)
+      end
+    end,
+    data
+  )
+
+  uws_app_run(0, self)
+end
+
+-- Methods
+## local function defmethod(method)
+function App:#|method|#(path: string, handler: function(res: *Response, req: *Request, dat: pointer): void, dat: pointer): void
+  #|'uws_app_' .. method|#(0, self, path, handler, dat)
+end
+## end
+
+## defmethod 'get'
+## defmethod 'post'
+## defmethod 'put'
+## defmethod 'delete'
+## defmethod 'patch'
+## defmethod 'options'
+## defmethod 'head'
+## defmethod 'connect'
+## defmethod 'trace'
+## defmethod 'any'

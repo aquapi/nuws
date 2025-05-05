@@ -1,103 +1,15 @@
-##[==[
-local fs = require 'nelua.utils.fs'
-
--- Get file directory
-local dir = fs.dirname(debug.getinfo(1).source:sub(2, -9))
-
-linklib(fs.abspath('../capi/libuwebsockets.so', dir))
-cinclude(fs.abspath('../capi/libuwebsockets.h', dir))
-]==]
-
 require './bindings.nelua'
 
--- Namespacing
 local uws = @record {}
-
--- No casting for these props
-local App = @record {
-  ptr: *uws_app_t,
-  port: integer,
-  host: string
-}
-local uws.App = App
+return uws
 
 -- Initialization
-local function createApp(ssl: boolean, options: us_socket_context_options_t): App
-  local ptr: *uws_app_t = uws_create_app(0, options)
-  return (@App){ ptr, 3000, '127.0.0.1' }
-end
-local uws.createApp = createApp
+local App = require './app.nelua'
 
--- Destroy the app instance
-function App:deinit(): void
-  uws_app_destroy(0, self.ptr)
+local uws.App = App
+function uws.app(options: us_socket_context_options_t): *App
+  return uws_create_app(0, options)
 end
 
--- Close all sockets
-function App:close(): void
-  uws_app_close(0, self.ptr)
-end
-
--- Start the server
-function App:listen(port: integer, handler: uws_listen_handler, data: pointer): void
-  uws_app_listen_with_config(
-    0,
-    self.ptr,
-    (@uws_app_listen_config_t) { self.port, self.host },
-
-    handler or function (listen_socket: *us_listen_socket_t, config: uws_app_listen_config_t, data: pointer): void
-      if listen_socket then
-        print('Host', config.host)
-        print('Port:', config.port)
-        end
-      end,
-    data
-  )
-  uws_app_run(0, self.ptr)
-end
-
--- Describe a response
-local Response: type = uws_res_t
-local uws.Response = Response
-
-function Response:write(str: string): void
-  uws_res_write(0, self, str.data, str.size)
-end
-
-function Response:close(str: string): void
-  uws_res_end(0, self, str.data, str.size, true)
-end
-
--- Describe a request
-local Request: type = uws_req_t
-local uws.Request = Request
-
--- Describe a route handler
-local RouteHandler: type = @function(res: *Response, req: *Request, dat: pointer): void
-local uws.RouteHandler = RouteHandler
-
--- Methods
-## local function defineMethod(method)
-function App:#|method|#(path: string, handler: RouteHandler, dat: pointer): void
-  #|'uws_app_' .. method|#(
-    0,
-    self.ptr,
-    path,
-    handler,
-    dat
-  )
-end
-## end
-
-## defineMethod('get')
-## defineMethod('post')
-## defineMethod('put')
-## defineMethod('delete')
-## defineMethod('patch')
-## defineMethod('options')
-## defineMethod('head')
-## defineMethod('connect')
-## defineMethod('trace')
-## defineMethod('any')
-
-return uws
+local uws.Request = require './request.nelua'
+local uws.Response = require './response.nelua'

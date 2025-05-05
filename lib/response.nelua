@@ -1,0 +1,51 @@
+require './bindings.nelua'
+
+-- Describe a response
+local Response = uws_res_t
+return Response
+
+function Response:write(str: string): void
+  uws_res_write(0, self, str.data, str.size)
+end
+
+-- End without body
+function Response:complete(close_conn: boolean): void
+  uws_res_end_without_body(0, self, close_conn)
+end
+
+-- End with body
+function Response:finalize(str: string, close_conn: boolean): void
+  uws_res_end(0, self, str.data, str.size, close_conn)
+end
+
+function Response:cork(handler: function(res: *Response, dat: pointer): void, dat: pointer): void
+  uws_res_cork(0, self, handler, dat)
+end
+
+function Response:pause(): void
+  uws_res_pause(0, self)
+end
+
+function Response:resume(): void
+  uws_res_resume(0, self)
+end
+
+function Response:write_continue(): void
+  uws_res_write_continue(0, self)
+end
+
+function Response:write_status(str: string): void
+  uws_res_write_status(0, self, str.data, str.size)
+end
+
+function Response:has_responded(): boolean
+  return uws_res_has_responded(0, self)
+end
+
+function Response:write_header(key: string, value: overload(uinteger, string)): void
+  ## if value.type.is_string then
+    uws_res_write_header(0, self, key.data, key.size, value.data, value.size)
+  ## else
+    uws_res_write_header_int(0, self, key.data, key.size, value)
+  ## end
+end
