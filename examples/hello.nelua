@@ -2,12 +2,12 @@
   cflags '-Ofast'
 ]==]
 
-require '../lib/app.nelua'
+local uws = require '../lib/main.nelua'
 
 local app = uws.createApp()
 
-app:any('/*', function(res: *uws_res_t, req: *uws_req_t, data: pointer): void
-  uws_res_end(app.ssl, res, 'Hello', 5, false)
+app:any('/*', function(res: *uws.Response, req: *uws.Request, dat: pointer): void
+  res:close('Hello')
 end)
 
 app:listen(3000)
