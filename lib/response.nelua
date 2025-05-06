@@ -4,48 +4,48 @@ require './bindings.nelua'
 local response = uws_res_t
 return response
 
-function response:write(str: string): void
-  uws_res_write(0, self, str.data, str.size)
+function response:write(str: string): void <inline>
+  uws_res_write(self, str.data, str.size)
 end
 
 -- End without body
-function response:complete(close_conn: boolean): void
-  uws_res_end_without_body(0, self, close_conn)
+function response:complete(close_conn: boolean): void <inline>
+  uws_res_end_without_body(self, close_conn)
 end
 
 -- End with body
-function response:finalize(str: string, close_conn: boolean): void
-  uws_res_end(0, self, str.data, str.size, close_conn)
+function response:finalize(str: string, close_conn: boolean): void <inline>
+  uws_res_end(self, str.data, str.size, close_conn)
 end
 
-function response:cork(handler: function(res: *response, dat: pointer): void, dat: pointer): void
-  uws_res_cork(0, self, handler, dat)
+function response:cork(handler: function(res: *response): void): void <inline>
+  uws_res_cork(self, handler)
 end
 
-function response:pause(): void
-  uws_res_pause(0, self)
+function response:pause(): void <inline>
+  uws_res_pause(self)
 end
 
-function response:resume(): void
-  uws_res_resume(0, self)
+function response:resume(): void <inline>
+  uws_res_resume(self)
 end
 
-function response:write_continue(): void
-  uws_res_write_continue(0, self)
+function response:write_continue(): void <inline>
+  uws_res_write_continue(self)
 end
 
-function response:write_status(str: string): void
-  uws_res_write_status(0, self, str.data, str.size)
+function response:write_status(str: string): void <inline>
+  uws_res_write_status(self, str.data, str.size)
 end
 
-function response:has_responded(): boolean
-  return uws_res_has_responded(0, self)
+function response:has_responded(): boolean <inline>
+  return uws_res_has_responded(self)
 end
 
-function response:write_header(key: string, value: overload(uinteger, string)): void
+function response:write_header(key: string, value: overload(uinteger, string)): void <inline>
   ## if value.type.is_string then
-    uws_res_write_header(0, self, key.data, key.size, value.data, value.size)
+    uws_res_write_header(self, key.data, key.size, value.data, value.size)
   ## else
-    uws_res_write_header_int(0, self, key.data, key.size, value)
+    uws_res_write_header_int(self, key.data, key.size, value)
   ## end
 end

@@ -10,46 +10,36 @@ local app = uws_app_t
 return app
 
 -- Destroy the app instance
-function app:destroy(): void
-  uws_app_destroy(0, self)
+function app:destroy(): void <inline>
+  uws_app_destroy(self)
 end
 
 -- Close all sockets
-function app:close(): void
-  uws_app_close(0, self)
+function app:close(): void <inline>
+  uws_app_close(self)
 end
 
 -- Start the server
-function app:listen(options: uws_app_listen_config_t, handler: uws_listen_handler, data: pointer): void
-  options.port = options.port or 3000
-  options.host = options.host or (@cstring)('127.0.0.1')
-
-  uws_app_listen_with_config(
-    0, self, options,
-
-    handler or function (s: *us_listen_socket_t, config: uws_app_listen_config_t, data: pointer): void
-      if s then
-        C.printf('Host: %s\n', config.host)
-        C.printf('Port: %i\n', config.port)
-      end
-    end,
-    data
-  )
-
-  uws_app_run(0, self)
+function app:listen(port: integer, handler: facultative(uws_listen_handler)): void <inline>
+  ## if handler.type.is_niltype then
+    uws_app_listen(self, port, function (s: *us_listen_socket_t): void end)
+  ## else
+    uws_app_listen(self, port, handler)
+  ## end
+  uws_app_run(self)
 end
 
 -- Methods
 ## local function defmethod(method)
-function app:#|method|#(path: string, handler: function(res: *response, req: *request, dat: pointer): void, dat: pointer): void
-  #|'uws_app_' .. method|#(0, self, path, handler, dat)
+function app:#|method|#(path: string, handler: function(res: *response, req: *request): void): void <inline>
+  #|'uws_app_' .. method|#(self, path, handler)
 end
 ## end
 
 ## defmethod 'get'
 ## defmethod 'post'
 ## defmethod 'put'
-## defmethod 'delete'
+## defmethod 'del'
 ## defmethod 'patch'
 ## defmethod 'options'
 ## defmethod 'head'

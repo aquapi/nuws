@@ -4,37 +4,41 @@ require './bindings.nelua'
 local request = uws_req_t
 return request
 
-function request:method(): string
+function request:method(): string <inline>
   local str: string
   str.size = uws_req_get_case_sensitive_method(self, &str.data)
   return str
 end
 
-function request:header(name: string): string
+function request:header(name: string): string <inline>
   local str: string
   str.size = uws_req_get_header(self, name.data, name.size, &str.data)
   return str
 end
 
-function request:path(): string
+function request:path(): string <inline>
   local str: string
   str.size = uws_req_get_url(self, &str.data)
   return str
 end
 
-function request:full_path(): string
+function request:full_path(): string <inline>
   local str: string
   str.size = uws_req_get_full_url(self, &str.data)
   return str
 end
 
-function request:param(idx: uint16): string
+function request:param(id: overload(uint16, string)): string <inline>
   local str: string
-  str.size = uws_req_get_parameter(self, idx, &str.data)
+  ## if idx.type.is_uint16 then
+    str.size = uws_req_get_parameter_index(self, id, &str.data)
+  ## else
+    str.size = uws_req_get_parameter_name(self, id.data, id.size, &str.data)
+  ## end
   return str
 end
 
-function request:query(name: string): string
+function request:query(name: string): string <inline>
   local str: string
   str.size = uws_req_get_query(self, name.data, name.size, &str.data)
   return str

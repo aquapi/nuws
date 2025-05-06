@@ -8,13 +8,11 @@ local app = uws.app()
 
 app:any(
   '/*',
-  function(res: *uws.response, req: *uws.request, dat: pointer): void
+  function(res: *uws.response, req: *uws.request): void
     res:write_header('Cookie', 'a=b')
     res:write_header('Id', (@uint64)(12))
     res:finalize('Hello')
   end
 )
 
-app:listen({
-  port = 3000
-})
+app:listen(3000)

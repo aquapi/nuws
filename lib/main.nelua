@@ -13,8 +13,8 @@ return uws
 -- Initialization
 local app = require './app.nelua'
 
-function uws.app(options: us_socket_context_options_t): *app
-  return uws_create_app(0, options)
+function uws.app(): *app <inline>
+  return uws_create_app()
 end
 
 local uws.request = require './request.nelua'
