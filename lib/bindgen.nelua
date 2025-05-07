@@ -11,11 +11,11 @@ require('nelua.plugins.nldecl').generate_bindings_file {
   include_names = {'^us_', '^uws_'}
 }
 
-print 'Patching bindings'
+print 'Patching bindings...'
 
 local content = fs.readfile(utils.bindings)
 content = content:gsub("global uws_c_string_view_t: type <cimport,nodecl,forwarddecl> = @record{}", "global uws_c_string_view_t: type = string")
 fs.writefile(utils.bindings, content)
 
-print 'Binding generated at lib/bindings.nelua'
+print 'Binding generated at "lib/bindings.nelua"!'
 ]==]
