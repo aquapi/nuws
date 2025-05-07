@@ -1,26 +1,12 @@
 require './bindings.nelua'
-require 'C.stdio'
 require 'string'
 
-local request = require './request.nelua'
-local response = require './response.nelua'
-
--- No casting for these props
-local app = uws_app_t
-return app
-
--- Destroy the app instance
-function app:destroy(): void <inline>
-  uws_app_destroy(self)
-end
-
--- Close all sockets
-function app:close(): void <inline>
-  uws_app_close(self)
-end
+local uws_app_t.destroy = uws_app_destroy
+local uws_app_t.close = uws_app_close
+local uws_app_t.run = uws_app_run
 
 -- Start the server
-function app:listen(port: integer, handler: facultative(uws_listen_handler)): void <inline>
+function uws_app_t:listen(port: integer, handler: facultative(uws_listen_handler)): void <inline>
   ## if handler.type.is_niltype then
     uws_app_listen(self, port, function (s: *us_listen_socket_t): void end)
   ## else
@@ -28,15 +14,9 @@ function app:listen(port: integer, handler: facultative(uws_listen_handler)): vo
   ## end
 end
 
-function app:run(): void <inline>
-  uws_app_run(self)
-end
-
 -- Methods
 ## local function defmethod(method)
-function app:#|method|#(path: string, handler: function(res: *response, req: *request): void): void <inline>
-  #|'uws_app_' .. method|#(self, path, handler)
-end
+local uws_app_t.#|method|# = #|'uws_app_' .. method|#
 ## end
 
 ## defmethod 'get'

@@ -1,48 +1,16 @@
 require './bindings.nelua'
 
--- Describe a response
-local response = uws_res_t
-return response
+local uws_res_t.write = uws_res_write
+local uws_res_t.complete = uws_res_end_without_body
+local uws_res_t.finalize = uws_res_end
+local uws_res_t.cork = uws_res_cork
+local uws_res_t.pause = uws_res_pause
+local uws_res_t.resume = uws_res_resume
+local uws_res_t.write_continue = uws_res_write_continue
+local uws_res_t.write_status = uws_res_write_status
+local uws_res_t.has_responded = uws_res_has_responded
 
-function response:write(str: string): void <inline>
-  uws_res_write(self, &str)
-end
-
--- End without body
-function response:complete(close_conn: boolean): void <inline>
-  uws_res_end_without_body(self, close_conn)
-end
-
--- End with body
-function response:finalize(str: string, close_conn: boolean): void <inline>
-  uws_res_end(self, &str, close_conn)
-end
-
-function response:cork(handler: function(res: *response): void): void <inline>
-  uws_res_cork(self, handler)
-end
-
-function response:pause(): void <inline>
-  uws_res_pause(self)
-end
-
-function response:resume(): void <inline>
-  uws_res_resume(self)
-end
-
-function response:write_continue(): void <inline>
-  uws_res_write_continue(self)
-end
-
-function response:write_status(str: string): void <inline>
-  uws_res_write_status(self, &str)
-end
-
-function response:has_responded(): boolean <inline>
-  return uws_res_has_responded(self)
-end
-
-function response:write_header(key: string, value: overload(uinteger, string)): void <inline>
+function uws_res_t:write_header(key: string, value: overload(uinteger, string)): void <inline>
   ## if value.type.is_string then
     uws_res_write_header(self, &key, &value)
   ## else

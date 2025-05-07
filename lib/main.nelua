@@ -5,14 +5,17 @@ linklib(utils.lib)
 cinclude(utils.header)
 ]==]
 
+require './app.nelua'
 require './bindings.nelua'
+require './request.nelua'
+require './response.nelua'
 
 local uws = @record {}
 return uws
 
--- Initialization
-local app = require './app.nelua'
-local uws.app: function(): *app = uws_create_app
+-- Aliases
+local uws.app = uws_app_t
+local uws.create_app: function(): *uws.app = uws_create_app
 
-local uws.request = require './request.nelua'
-local uws.response = require './response.nelua'
+local uws.request = uws_req_t
+local uws.response = uws_res_t

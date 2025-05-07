@@ -1,7 +1,6 @@
 #include "libuwebsockets.h"
 
 #include "../uWebSockets/src/App.h"
-#include <cstdint>
 #include <string_view>
 
 #pragma region uWS-app
@@ -11,17 +10,7 @@
     {                                                                                                                       \
         ((uWS::App *)app)->name(pattern, [handler](auto *res, auto *req) { handler((uws_res_t *)res, (uws_req_t *)req); }); \
     };
-
-METHOD(get)
-METHOD(post)
-METHOD(put)
-METHOD(del)
-METHOD(patch)
-METHOD(head)
-METHOD(connect)
-METHOD(trace)
-METHOD(any)
-
+LOAD_METHODS
 #undef METHOD
 
 struct nlstring

@@ -4,10 +4,9 @@
 
 local uws = require '../lib/main.nelua'
 
-local app = uws.app()
+local app = uws.create_app()
 
 app:any('/*', function(res: *uws.response, req: *uws.request): void
-  print(req:method(), req:path())
   res:write_header('Cookie', 'a=b')
   res:write_header('Id', (@uint64)(12))
   res:finalize('Hello')

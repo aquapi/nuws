@@ -6,6 +6,18 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#define LOAD_METHODS \
+  METHOD(get) \
+  METHOD(post) \
+  METHOD(put) \
+  METHOD(del) \
+  METHOD(patch) \
+  METHOD(head) \
+  METHOD(options) \
+  METHOD(connect) \
+  METHOD(trace) \
+  METHOD(any) \
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -69,16 +81,9 @@ extern "C"
     typedef void (*uws_listen_handler)(struct us_listen_socket_t *listen_socket);
     typedef void (*uws_method_handler)(uws_res_t *response, uws_req_t *request);
 
-    void uws_app_get(uws_app_t *app, const char *pattern, uws_method_handler handler);
-    void uws_app_post(uws_app_t *app, const char *pattern, uws_method_handler handler);
-    void uws_app_put(uws_app_t *app, const char *pattern, uws_method_handler handler);
-    void uws_app_options(uws_app_t *app, const char *pattern, uws_method_handler handler);
-    void uws_app_del(uws_app_t *app, const char *pattern, uws_method_handler handler);
-    void uws_app_patch(uws_app_t *app, const char *pattern, uws_method_handler handler);
-    void uws_app_head(uws_app_t *app, const char *pattern, uws_method_handler handler);
-    void uws_app_connect(uws_app_t *app, const char *pattern, uws_method_handler handler);
-    void uws_app_trace(uws_app_t *app, const char *pattern, uws_method_handler handler);
-    void uws_app_any(uws_app_t *app, const char *pattern, uws_method_handler handler);
+    #define METHOD(name) void uws_app_##name(uws_app_t *app, const char *pattern, uws_method_handler handler);
+    LOAD_METHODS
+    #undef METHOD
 
     uws_app_t *uws_create_app();
     void uws_app_destroy(uws_app_t *app);
