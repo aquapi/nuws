@@ -21,6 +21,10 @@ extern "C"
     struct uws_websocket_s;
     typedef struct uws_websocket_s uws_websocket_t;
 
+    // Hack: nelua string type
+    struct nlstring;
+    typedef struct nlstring uws_c_string_view_t;
+
     typedef struct
     {
         int port;
@@ -87,7 +91,7 @@ extern "C"
 
     typedef bool (*uws_res_on_writable_handler)(uws_res_t *res, uintmax_t);
     typedef bool (*uws_res_on_aborted_handler)(uws_res_t *res);
-    typedef void (*uws_res_on_data_handler)(uws_res_t *res, const char *chunk, size_t chunk_length, bool is_end);
+    typedef void (*uws_res_on_data_handler)(uws_res_t *res, const char* data, size_t size, bool is_end);
 
     typedef struct
     {
@@ -96,45 +100,42 @@ extern "C"
     } uws_try_end_result_t;
 
     void uws_res_close(uws_res_t *res);
-    void uws_res_end(uws_res_t *res, const char *data, size_t length, bool close_connection);
+    void uws_res_end(uws_res_t *res, uws_c_string_view_t *data, bool close_connection);
     void uws_res_cork(uws_res_t *res, void (*callback)(uws_res_t *res));
     void uws_res_pause(uws_res_t *res);
     void uws_res_resume(uws_res_t *res);
     void uws_res_write_continue(uws_res_t *res);
-    void uws_res_write_status(uws_res_t *res, const char *status, size_t length);
-    void uws_res_write_header(uws_res_t *res, const char *key, size_t key_length, const char *value, size_t value_length);
-    void uws_res_write_header_int(uws_res_t *res, const char *key, size_t key_length, uint64_t value);
+    void uws_res_write_status(uws_res_t *res, uws_c_string_view_t *status);
+    void uws_res_write_header(uws_res_t *res, uws_c_string_view_t *key, uws_c_string_view_t *value);
+    void uws_res_write_header_int(uws_res_t *res, uws_c_string_view_t *key, uint64_t value);
     void uws_res_end_without_body(uws_res_t *res, bool close_connection);
-    bool uws_res_write(uws_res_t *res, const char *data, size_t length);
+    bool uws_res_write(uws_res_t *res, uws_c_string_view_t *data);
     void uws_res_override_write_offset(uws_res_t *res, uintmax_t offset);
     bool uws_res_has_responded(uws_res_t *res);
     void uws_res_on_writable(uws_res_t *res, uws_res_on_writable_handler handler);
     void uws_res_on_aborted(uws_res_t *res, uws_res_on_aborted_handler handler);
     void uws_res_on_data(uws_res_t *res, uws_res_on_data_handler handler);
-    void uws_res_upgrade(uws_res_t *res, void *data, const char *sec_web_socket_key, size_t sec_web_socket_key_length, const char *sec_web_socket_protocol, size_t sec_web_socket_protocol_length, const char *sec_web_socket_extensions, size_t sec_web_socket_extensions_length, uws_socket_context_t *ws);
+    void uws_res_upgrade(uws_res_t *res, void *data, uws_c_string_view_t *sec_web_socket_key, uws_c_string_view_t *sec_web_socket_protocol, uws_c_string_view_t *sec_web_socket_extensions, uws_socket_context_t *ws);
 
-    uws_try_end_result_t uws_res_try_end(uws_res_t *res, const char *data, size_t length, uintmax_t total_size, bool close_connection);
+    uws_try_end_result_t uws_res_try_end(uws_res_t *res, uws_c_string_view_t *data, uintmax_t total_size, bool close_connection);
     uintmax_t uws_res_get_write_offset(uws_res_t *res);
-    size_t uws_res_get_remote_address(uws_res_t *res, const char **dest);
-    size_t uws_res_get_remote_address_as_text(uws_res_t *res, const char **dest);
+    uws_c_string_view_t uws_res_get_remote_address(uws_res_t *res);
+    uws_c_string_view_t uws_res_get_remote_address_as_text(uws_res_t *res);
 
 #pragma endregion
 #pragma region uWS-Request
 
-    typedef void (*uws_get_headers_server_handler)(const char *header_name, size_t header_name_size, const char *header_value, size_t header_value_size);
-
     bool uws_req_is_ancient(uws_req_t *res);
     bool uws_req_get_yield(uws_req_t *res);
     void uws_req_set_yield(uws_req_t *res, bool yield);
-    void uws_req_for_each_header(uws_req_t *res, uws_get_headers_server_handler handler);
-    size_t uws_req_get_url(uws_req_t *res, const char **dest);
-    size_t uws_req_get_full_url(uws_req_t *res, const char **dest);
-    size_t uws_req_get_method(uws_req_t *res, const char **dest);
-    size_t uws_req_get_case_sensitive_method(uws_req_t *res, const char **dest);
-    size_t uws_req_get_header(uws_req_t *res, const char *lower_case_header, size_t lower_case_header_length, const char **dest);
-    size_t uws_req_get_query(uws_req_t *res, const char *key, size_t key_length, const char **dest);
-    size_t uws_req_get_parameter_name(uws_req_t *res, const char *key, size_t key_length, const char **dest);
-    size_t uws_req_get_parameter_index(uws_req_t *res, unsigned short index, const char **dest);
+    uws_c_string_view_t uws_req_get_url(uws_req_t *res);
+    uws_c_string_view_t uws_req_get_full_url(uws_req_t *res);
+    uws_c_string_view_t uws_req_get_method(uws_req_t *res);
+    uws_c_string_view_t uws_req_get_case_sensitive_method(uws_req_t *res);
+    uws_c_string_view_t uws_req_get_header(uws_req_t *res, uws_c_string_view_t *lower_case_header);
+    uws_c_string_view_t uws_req_get_query(uws_req_t *res, uws_c_string_view_t *key);
+    uws_c_string_view_t uws_req_get_parameter_name(uws_req_t *res, uws_c_string_view_t *key);
+    uws_c_string_view_t uws_req_get_parameter_index(uws_req_t *res, unsigned short index);
 
 #pragma endregion
 #pragma region uWS-Websockets

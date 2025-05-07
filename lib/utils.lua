@@ -9,5 +9,6 @@ local dir = getdir()
 return {
   dirname = getdir,
   header = fs.abspath('../capi/libuwebsockets.h', dir),
-  lib = fs.abspath('../capi/libuwebsockets.so', dir)
+  lib = fs.abspath('../capi/libuwebsockets.so', dir),
+  bindings = fs.abspath('bindings.nelua', dir)
 }

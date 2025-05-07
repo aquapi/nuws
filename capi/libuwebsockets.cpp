@@ -1,6 +1,8 @@
 #include "libuwebsockets.h"
 
 #include "../uWebSockets/src/App.h"
+#include <cstdint>
+#include <string_view>
 
 #pragma region uWS-app
 
@@ -21,6 +23,23 @@ METHOD(trace)
 METHOD(any)
 
 #undef METHOD
+
+struct nlstring
+{
+  uint8_t* data;
+  unsigned long size;
+};
+
+std::string_view uws_c_string_view_to_cpp(uws_c_string_view_t* ptr) {
+  return std::string_view((char*) ptr->data, ptr->size);
+}
+
+uws_c_string_view_t uws_cpp_string_view_to_c(const std::string_view& view) {
+  return {
+    (uint8_t*) view.data(),
+    view.length()
+  };
+}
 
 uws_app_t *uws_create_app()
 {
@@ -56,9 +75,9 @@ void uws_res_close(uws_res_t *res)
     ((uWS::HttpResponse<false> *)res)->close();
 }
 
-void uws_res_end(uws_res_t *res, const char *data, size_t length, bool close_connection)
+void uws_res_end(uws_res_t *res, uws_c_string_view_t* view, bool close_connection)
 {
-    ((uWS::HttpResponse<false> *)res)->end(std::string_view(data, length), close_connection);
+    ((uWS::HttpResponse<false> *)res)->end(uws_c_string_view_to_cpp(view), close_connection);
 }
 
 void uws_res_cork(uws_res_t *res, void (*callback)(uws_res_t *res))
@@ -82,19 +101,19 @@ void uws_res_write_continue(uws_res_t *res)
     ((uWS::HttpResponse<false> *)res)->writeContinue();
 }
 
-void uws_res_write_status(uws_res_t *res, const char *status, size_t length)
+void uws_res_write_status(uws_res_t *res, uws_c_string_view_t *status)
 {
-    ((uWS::HttpResponse<false> *)res)->writeStatus(std::string_view(status, length));
+    ((uWS::HttpResponse<false> *)res)->writeStatus(uws_c_string_view_to_cpp(status));
 }
 
-void uws_res_write_header(uws_res_t *res, const char *key, size_t key_length, const char *value, size_t value_length)
+void uws_res_write_header(uws_res_t *res, uws_c_string_view_t *key, uws_c_string_view_t *value)
 {
-    ((uWS::HttpResponse<false> *)res)->writeHeader(std::string_view(key, key_length), std::string_view(value, value_length));
+    ((uWS::HttpResponse<false> *)res)->writeHeader(uws_c_string_view_to_cpp(key), uws_c_string_view_to_cpp(value));
 }
 
-void uws_res_write_header_int(uws_res_t *res, const char *key, size_t key_length, uint64_t value)
+void uws_res_write_header_int(uws_res_t *res, uws_c_string_view_t *key, uint64_t value)
 {
-    ((uWS::HttpResponse<false> *)res)->writeHeader(std::string_view(key, key_length), value);
+    ((uWS::HttpResponse<false> *)res)->writeHeader(uws_c_string_view_to_cpp(key), value);
 }
 
 void uws_res_end_without_body(uws_res_t *res, bool close_connection)
@@ -102,9 +121,9 @@ void uws_res_end_without_body(uws_res_t *res, bool close_connection)
     ((uWS::HttpResponse<false> *)res)->endWithoutBody(std::nullopt, close_connection);
 }
 
-bool uws_res_write(uws_res_t *res, const char *data, size_t length)
+bool uws_res_write(uws_res_t *res, uws_c_string_view_t *data)
 {
-    return ((uWS::HttpResponse<false> *)res)->write(std::string_view(data, length));
+    return ((uWS::HttpResponse<false> *)res)->write(uws_c_string_view_to_cpp(data));
 }
 
 void uws_res_override_write_offset(uws_res_t *res, uintmax_t offset)
@@ -135,15 +154,15 @@ void uws_res_on_data(uws_res_t *res, uws_res_on_data_handler handler)
                                               { handler(res, chunk.data(), chunk.length(), is_end); });
 }
 
-void uws_res_upgrade(uws_res_t *res, void *data, const char *sec_web_socket_key, size_t sec_web_socket_key_length, const char *sec_web_socket_protocol, size_t sec_web_socket_protocol_length, const char *sec_web_socket_extensions, size_t sec_web_socket_extensions_length, uws_socket_context_t *ws)
+void uws_res_upgrade(uws_res_t *res, void *data, uws_c_string_view_t *sec_web_socket_key, uws_c_string_view_t *sec_web_socket_protocol, uws_c_string_view_t *sec_web_socket_extensions, uws_socket_context_t *ws)
 {
-    ((uWS::HttpResponse<false> *)res)->template upgrade<void *>(data ? std::move(data) : NULL, std::string_view(sec_web_socket_key, sec_web_socket_key_length), std::string_view(sec_web_socket_protocol, sec_web_socket_protocol_length), std::string_view(sec_web_socket_extensions, sec_web_socket_extensions_length), (struct us_socket_context_t *)ws);
+    ((uWS::HttpResponse<false> *)res)->template upgrade<void *>(data ? std::move(data) : NULL, uws_c_string_view_to_cpp(sec_web_socket_key), uws_c_string_view_to_cpp(sec_web_socket_protocol), uws_c_string_view_to_cpp(sec_web_socket_extensions), (struct us_socket_context_t *)ws);
 }
 
-uws_try_end_result_t uws_res_try_end(uws_res_t *res, const char *data, size_t length, uintmax_t total_size, bool close_connection)
+uws_try_end_result_t uws_res_try_end(uws_res_t *res, uws_c_string_view_t *data, uintmax_t total_size, bool close_connection)
 {
 
-    std::pair<bool, bool> result = ((uWS::HttpResponse<false> *)res)->tryEnd(std::string_view(data, length), total_size);
+    std::pair<bool, bool> result = ((uWS::HttpResponse<false> *)res)->tryEnd(uws_c_string_view_to_cpp(data), total_size);
     return uws_try_end_result_t{
         .ok = result.first,
         .has_responded = result.second,
@@ -155,18 +174,14 @@ uintmax_t uws_res_get_write_offset(uws_res_t *res)
     return ((uWS::HttpResponse<false> *)res)->getWriteOffset();
 }
 
-size_t uws_res_get_remote_address(uws_res_t *res, const char **dest)
+uws_c_string_view_t uws_res_get_remote_address(uws_res_t *res)
 {
-    std::string_view value = ((uWS::HttpResponse<false> *)res)->getRemoteAddress();
-    *dest = value.data();
-    return value.length();
+    return uws_cpp_string_view_to_c(((uWS::HttpResponse<false> *)res)->getRemoteAddress());
 }
 
-size_t uws_res_get_remote_address_as_text(uws_res_t *res, const char **dest)
+uws_c_string_view_t uws_res_get_remote_address_as_text(uws_res_t *res)
 {
-    std::string_view value = ((uWS::HttpResponse<false> *)res)->getRemoteAddressAsText();
-    *dest = value.data();
-    return value.length();
+    return uws_cpp_string_view_to_c(((uWS::HttpResponse<false> *)res)->getRemoteAddressAsText());
 }
 
 #pragma endregion
@@ -187,68 +202,39 @@ void uws_req_set_yield(uws_req_t *res, bool yield)
     return ((uWS::HttpRequest *)res)->setYield(yield);
 }
 
-void uws_req_for_each_header(uws_req_t *res, uws_get_headers_server_handler handler)
+uws_c_string_view_t uws_req_get_url(uws_req_t *res)
 {
-    for (auto header : *((uWS::HttpRequest *)res))
-    {
-        handler(header.first.data(), header.first.length(), header.second.data(), header.second.length());
-    }
+    return uws_cpp_string_view_to_c(((uWS::HttpRequest *)res)->getUrl());
 }
 
-size_t uws_req_get_url(uws_req_t *res, const char **dest)
+uws_c_string_view_t uws_req_get_full_url(uws_req_t *res)
 {
-    std::string_view value = ((uWS::HttpRequest *)res)->getUrl();
-    *dest = value.data();
-    return value.length();
+    return uws_cpp_string_view_to_c(((uWS::HttpRequest *)res)->getFullUrl());
 }
 
-size_t uws_req_get_full_url(uws_req_t *res, const char **dest)
+uws_c_string_view_t uws_req_get_case_sensitive_method(uws_req_t *res)
 {
-    std::string_view value = ((uWS::HttpRequest *)res)->getFullUrl();
-    *dest = value.data();
-    return value.length();
+    return uws_cpp_string_view_to_c(((uWS::HttpRequest *)res)->getCaseSensitiveMethod());
 }
 
-size_t uws_req_get_method(uws_req_t *res, const char **dest)
+uws_c_string_view_t uws_req_get_header(uws_req_t *res, uws_c_string_view_t *lower_case_header)
 {
-    std::string_view value = ((uWS::HttpRequest *)res)->getMethod();
-    *dest = value.data();
-    return value.length();
+    return uws_cpp_string_view_to_c(((uWS::HttpRequest *)res)->getHeader(uws_c_string_view_to_cpp(lower_case_header)));
 }
 
-size_t uws_req_get_case_sensitive_method(uws_req_t *res, const char **dest)
+uws_c_string_view_t uws_req_get_query(uws_req_t *res, uws_c_string_view_t *key)
 {
-    std::string_view value = ((uWS::HttpRequest *)res)->getCaseSensitiveMethod();
-    *dest = value.data();
-    return value.length();
+    return uws_cpp_string_view_to_c(((uWS::HttpRequest *)res)->getQuery(uws_c_string_view_to_cpp(key)));
 }
 
-size_t uws_req_get_header(uws_req_t *res, const char *lower_case_header, size_t lower_case_header_length, const char **dest)
+uws_c_string_view_t uws_req_get_parameter_name(uws_req_t *res, uws_c_string_view_t *key)
 {
-    std::string_view value = ((uWS::HttpRequest *)res)->getHeader(std::string_view(lower_case_header, lower_case_header_length));
-    *dest = value.data();
-    return value.length();
+    return uws_cpp_string_view_to_c(((uWS::HttpRequest *)res)->getParameter(uws_c_string_view_to_cpp(key)));
 }
 
-size_t uws_req_get_query(uws_req_t *res, const char *key, size_t key_length, const char **dest)
+uws_c_string_view_t uws_req_get_parameter_index(uws_req_t *res, unsigned short index)
 {
-    std::string_view value = ((uWS::HttpRequest *)res)->getQuery(std::string_view(key, key_length));
-    *dest = value.data();
-    return value.length();
-}
-
-size_t uws_req_get_parameter_name(uws_req_t *res, const char *key, size_t key_length, const char **dest)
-{
-    std::string_view value = ((uWS::HttpRequest *)res)->getParameter(std::string_view(key, key_length));
-    *dest = value.data();
-    return value.length();
-}
-
-size_t uws_req_get_parameter_index(uws_req_t *res, unsigned short index, const char **dest)
-{
-    std::string_view value = ((uWS::HttpRequest *)res)->getParameter(index);
-    *dest = value.data();
-    return value.length();
+    return uws_cpp_string_view_to_c(((uWS::HttpRequest *)res)->getParameter(index));
 }
 
 #pragma endregion

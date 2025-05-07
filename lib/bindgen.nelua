@@ -1,10 +1,21 @@
 ##[==[
 local utils = require './utils.lua'
+local fs = require 'nelua.utils.fs'
+
+print 'Generate bindings...'
 
 -- generate nelua bindings file
 require('nelua.plugins.nldecl').generate_bindings_file {
-  output_file = 'lib/bindings.nelua',
+  output_file = utils.bindings,
   parse_includes = {utils.header},
-  include_names = {'^u(w?)s_'}
+  include_names = {'^us_', '^uws_'}
 }
+
+print 'Patching bindings'
+
+local content = fs.readfile(utils.bindings)
+content = content:gsub("global uws_c_string_view_t: type <cimport,nodecl,forwarddecl> = @record{}", "global uws_c_string_view_t: type = string")
+fs.writefile(utils.bindings, content)
+
+print 'Binding generated at lib/bindings.nelua'
 ]==]

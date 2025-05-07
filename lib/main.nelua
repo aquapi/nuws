@@ -12,10 +12,7 @@ return uws
 
 -- Initialization
 local app = require './app.nelua'
-
-function uws.app(): *app <inline>
-  return uws_create_app()
-end
+local uws.app: function(): *app = uws_create_app
 
 local uws.request = require './request.nelua'
 local uws.response = require './response.nelua'

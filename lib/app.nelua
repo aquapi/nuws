@@ -26,6 +26,9 @@ function app:listen(port: integer, handler: facultative(uws_listen_handler)): vo
   ## else
     uws_app_listen(self, port, handler)
   ## end
+end
+
+function app:run(): void <inline>
   uws_app_run(self)
 end
 
