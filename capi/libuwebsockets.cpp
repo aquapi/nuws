@@ -13,6 +13,7 @@
 LOAD_METHODS
 #undef METHOD
 
+// Identical structure to Nelua
 struct nlstring
 {
   uint8_t* data;

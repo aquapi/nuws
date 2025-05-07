@@ -33,7 +33,7 @@ extern "C"
     struct uws_websocket_s;
     typedef struct uws_websocket_s uws_websocket_t;
 
-    // Hack: nelua string type
+    // NOTE: C++ and Nelua will define this later
     struct nlstring;
     typedef struct nlstring uws_c_string_view_t;
 
