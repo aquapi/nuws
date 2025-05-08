@@ -96,7 +96,7 @@ extern "C"
 
     typedef bool (*uws_res_on_writable_handler)(uws_res_t *res, uintmax_t);
     typedef bool (*uws_res_on_aborted_handler)(uws_res_t *res);
-    typedef void (*uws_res_on_data_handler)(uws_res_t *res, const char* data, size_t size, bool is_end);
+    typedef void (*uws_res_on_data_handler)(uws_res_t *res, uws_c_string_view_t data, bool is_end);
 
     typedef struct
     {
@@ -105,24 +105,24 @@ extern "C"
     } uws_try_end_result_t;
 
     void uws_res_close(uws_res_t *res);
-    void uws_res_end(uws_res_t *res, uws_c_string_view_t *data, bool close_connection);
+    void uws_res_end(uws_res_t *res, const uws_c_string_view_t *data, bool close_connection);
     void uws_res_cork(uws_res_t *res, void (*callback)(uws_res_t *res));
     void uws_res_pause(uws_res_t *res);
     void uws_res_resume(uws_res_t *res);
     void uws_res_write_continue(uws_res_t *res);
-    void uws_res_write_status(uws_res_t *res, uws_c_string_view_t *status);
-    void uws_res_write_header(uws_res_t *res, uws_c_string_view_t *key, uws_c_string_view_t *value);
-    void uws_res_write_header_int(uws_res_t *res, uws_c_string_view_t *key, uint64_t value);
+    void uws_res_write_status(uws_res_t *res, const uws_c_string_view_t *status);
+    void uws_res_write_header(uws_res_t *res, const uws_c_string_view_t *key, const uws_c_string_view_t *value);
+    void uws_res_write_header_int(uws_res_t *res, const uws_c_string_view_t *key, uint64_t value);
     void uws_res_end_without_body(uws_res_t *res, bool close_connection);
-    bool uws_res_write(uws_res_t *res, uws_c_string_view_t *data);
+    bool uws_res_write(uws_res_t *res, const uws_c_string_view_t *data);
     void uws_res_override_write_offset(uws_res_t *res, uintmax_t offset);
     bool uws_res_has_responded(uws_res_t *res);
     void uws_res_on_writable(uws_res_t *res, uws_res_on_writable_handler handler);
     void uws_res_on_aborted(uws_res_t *res, uws_res_on_aborted_handler handler);
     void uws_res_on_data(uws_res_t *res, uws_res_on_data_handler handler);
-    void uws_res_upgrade(uws_res_t *res, void *data, uws_c_string_view_t *sec_web_socket_key, uws_c_string_view_t *sec_web_socket_protocol, uws_c_string_view_t *sec_web_socket_extensions, uws_socket_context_t *ws);
+    void uws_res_upgrade(uws_res_t *res, uws_req_t *req, void *data, uws_socket_context_t *ws);
 
-    uws_try_end_result_t uws_res_try_end(uws_res_t *res, uws_c_string_view_t *data, uintmax_t total_size, bool close_connection);
+    uws_try_end_result_t uws_res_try_end(uws_res_t *res, const uws_c_string_view_t *data, uintmax_t total_size, bool close_connection);
     uintmax_t uws_res_get_write_offset(uws_res_t *res);
     uws_c_string_view_t uws_res_get_remote_address(uws_res_t *res);
     uws_c_string_view_t uws_res_get_remote_address_as_text(uws_res_t *res);
@@ -137,9 +137,9 @@ extern "C"
     uws_c_string_view_t uws_req_get_full_url(uws_req_t *res);
     uws_c_string_view_t uws_req_get_method(uws_req_t *res);
     uws_c_string_view_t uws_req_get_case_sensitive_method(uws_req_t *res);
-    uws_c_string_view_t uws_req_get_header(uws_req_t *res, uws_c_string_view_t *lower_case_header);
-    uws_c_string_view_t uws_req_get_query(uws_req_t *res, uws_c_string_view_t *key);
-    uws_c_string_view_t uws_req_get_parameter_name(uws_req_t *res, uws_c_string_view_t *key);
+    uws_c_string_view_t uws_req_get_header(uws_req_t *res, const uws_c_string_view_t *lower_case_header);
+    uws_c_string_view_t uws_req_get_query(uws_req_t *res, const uws_c_string_view_t *key);
+    uws_c_string_view_t uws_req_get_parameter_name(uws_req_t *res, const uws_c_string_view_t *key);
     uws_c_string_view_t uws_req_get_parameter_index(uws_req_t *res, unsigned short index);
 
 #pragma endregion
@@ -164,13 +164,13 @@ extern "C"
 
     typedef void (*uws_websocket_upgrade)(uws_res_t *response, uws_req_t *request, uws_socket_context_t *context);
     typedef void (*uws_websocket_open)(uws_websocket_t *ws);
-    typedef void (*uws_websocket_message)(uws_websocket_t *ws, const char *message, size_t length, uws_opcode_t opcode);
-    typedef void (*uws_websocket_dropped)(uws_websocket_t *ws, const char *message, size_t length, uws_opcode_t opcode);
+    typedef void (*uws_websocket_message)(uws_websocket_t *ws, uws_c_string_view_t message, uws_opcode_t opcode);
+    typedef void (*uws_websocket_dropped)(uws_websocket_t *ws, uws_c_string_view_t message, uws_opcode_t opcode);
     typedef void (*uws_websocket_drain)(uws_websocket_t *ws);
-    typedef void (*uws_websocket_ping)(uws_websocket_t *ws, const char *message, size_t length);
-    typedef void (*uws_websocket_pong)(uws_websocket_t *ws, const char *message, size_t length);
-    typedef void (*uws_websocket_close)(uws_websocket_t *ws, int code, const char *message, size_t length);
-    typedef void (*uws_websocket_subscription)(uws_websocket_t *ws, const char *topic_name, size_t topic_name_length, int new_number_of_subscriber, int old_number_of_subscriber);
+    typedef void (*uws_websocket_ping)(uws_websocket_t *ws, uws_c_string_view_t message);
+    typedef void (*uws_websocket_pong)(uws_websocket_t *ws, uws_c_string_view_t message);
+    typedef void (*uws_websocket_close)(uws_websocket_t *ws, int code, uws_c_string_view_t message);
+    typedef void (*uws_websocket_subscription)(uws_websocket_t *ws, uws_c_string_view_t topic, int new_number_of_subscriber, int old_number_of_subscriber);
 
     typedef struct
     {
@@ -195,23 +195,24 @@ extern "C"
 
     void uws_ws(uws_app_t *app, const char *pattern, uws_socket_behavior_t behavior);
     void uws_ws_close(uws_websocket_t *ws);
-    uws_sendstatus_t uws_ws_send(uws_websocket_t *ws, const char *message, size_t length, uws_opcode_t opcode);
-    uws_sendstatus_t uws_ws_send_with_options(uws_websocket_t *ws, const char *message, size_t length, uws_opcode_t opcode, bool compress, bool fin);
-    uws_sendstatus_t uws_ws_send_fragment(uws_websocket_t *ws, const char *message, size_t length, bool compress);
-    uws_sendstatus_t uws_ws_send_first_fragment(uws_websocket_t *ws, const char *message, size_t length, bool compress);
-    uws_sendstatus_t uws_ws_send_first_fragment_with_opcode(uws_websocket_t *ws, const char *message, size_t length, uws_opcode_t opcode, bool compress);
-    uws_sendstatus_t uws_ws_send_last_fragment(uws_websocket_t *ws, const char *message, size_t length, bool compress);
-    void uws_ws_end(uws_websocket_t *ws, int code, const char *message, size_t length);
-    void uws_ws_cork(uws_websocket_t *ws, void (*handler)());
-    bool uws_ws_subscribe(uws_websocket_t *ws, const char *topic, size_t length);
-    bool uws_ws_unsubscribe(uws_websocket_t *ws, const char *topic, size_t length);
-    bool uws_ws_is_subscribed(uws_websocket_t *ws, const char *topic, size_t length);
-    void uws_ws_iterate_topics(uws_websocket_t *ws, void (*callback)(const char *topic, size_t length));
-    bool uws_ws_publish(uws_websocket_t *ws, const char *topic, size_t topic_length, const char *message, size_t message_length);
-    bool uws_ws_publish_with_options(uws_websocket_t *ws, const char *topic, size_t topic_length, const char *message, size_t message_length, uws_opcode_t opcode, bool compress);
+
+    uws_sendstatus_t uws_ws_send(uws_websocket_t *ws, const uws_c_string_view_t *message, uws_opcode_t opcode);
+    uws_sendstatus_t uws_ws_send_with_options(uws_websocket_t *ws, const uws_c_string_view_t *message, uws_opcode_t opcode, bool compress, bool fin);
+    uws_sendstatus_t uws_ws_send_fragment(uws_websocket_t *ws, const uws_c_string_view_t *message, bool compress);
+    uws_sendstatus_t uws_ws_send_first_fragment(uws_websocket_t *ws, const uws_c_string_view_t *message, bool compress);
+    uws_sendstatus_t uws_ws_send_first_fragment_with_opcode(uws_websocket_t *ws, const uws_c_string_view_t *message, uws_opcode_t opcode, bool compress);
+    uws_sendstatus_t uws_ws_send_last_fragment(uws_websocket_t *ws, const uws_c_string_view_t *message, bool compress);
+    void uws_ws_end(uws_websocket_t *ws, int code, const uws_c_string_view_t *message);
+
+    void uws_ws_cork(uws_websocket_t *ws, void (*handler)(uws_websocket_t *ws));
+    bool uws_ws_subscribe(uws_websocket_t *ws, const uws_c_string_view_t *topic);
+    bool uws_ws_unsubscribe(uws_websocket_t *ws, const uws_c_string_view_t *topic);
+    bool uws_ws_is_subscribed(uws_websocket_t *ws, const uws_c_string_view_t *topic);
+    bool uws_ws_publish(uws_websocket_t *ws, const uws_c_string_view_t *topic, const uws_c_string_view_t *message);
+    bool uws_ws_publish_with_options(uws_websocket_t *ws, const uws_c_string_view_t *topic, const uws_c_string_view_t *message, uws_opcode_t opcode, bool compress);
     unsigned int uws_ws_get_buffered_amount(uws_websocket_t *ws);
-    size_t uws_ws_get_remote_address(uws_websocket_t *ws, const char **dest);
-    size_t uws_ws_get_remote_address_as_text(uws_websocket_t *ws, const char **dest);
+    uws_c_string_view_t uws_ws_get_remote_address(uws_websocket_t *ws);
+    uws_c_string_view_t uws_ws_get_remote_address_as_text(uws_websocket_t *ws);
 
 #pragma endregion
 

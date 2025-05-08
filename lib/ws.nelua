@@ -1,0 +1,25 @@
+require './bindings.nelua'
+
+local uws_websocket_t.close = uws_ws_close
+
+local uws_websocket_t.send = uws_ws_send
+local uws_websocket_t.send_with = uws_ws_send_with_options
+local uws_websocket_t.send_fragment = uws_ws_send_fragment
+local uws_websocket_t.send_first_fragment = uws_ws_send_first_fragment
+local uws_websocket_t.send_first_fragment_with = uws_ws_send_first_fragment_with_opcode
+local uws_websocket_t.send_last_fragment = uws_ws_send_last_fragment
+local uws_websocket_t.finalize = uws_ws_end
+
+local uws_websocket_t.cork = uws_ws_cork
+
+local uws_websocket_t.subscribe = uws_ws_subscribe
+local uws_websocket_t.unsubscribe = uws_ws_unsubscribe
+local uws_websocket_t.is_subcribed = uws_ws_is_subscribed
+
+local uws_websocket_t.publish = uws_ws_publish
+local uws_websocket_t.publish_with = uws_ws_publish_with_options
+
+local uws_websocket_t.buffered_amount = uws_ws_get_buffered_amount
+
+local uws_websocket_t.remote_address = uws_ws_get_remote_address
+local uws_websocket_t.remote_address_as_text = uws_ws_get_remote_address_as_text

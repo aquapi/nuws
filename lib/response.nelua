@@ -1,21 +1,34 @@
 require './bindings.nelua'
 
+local uws_res_t.on_writable_handler = uws_res_on_writable_handler
+local uws_res_t.on_aborted_handler = uws_res_on_aborted_handler
+local uws_res_t.on_data_handler = uws_res_on_data_handler
+
 local uws_res_t.write = uws_res_write
 local uws_res_t.complete = uws_res_end_without_body
 local uws_res_t.finalize = uws_res_end
+
+local uws_res_t.write_offset = uws_res_get_write_offset
+local uws_res_t.set_write_offset = uws_res_override_write_offset
+
 local uws_res_t.cork = uws_res_cork
+
 local uws_res_t.pause = uws_res_pause
 local uws_res_t.resume = uws_res_resume
+
 local uws_res_t.write_continue = uws_res_write_continue
 local uws_res_t.write_status = uws_res_write_status
+
 local uws_res_t.has_responded = uws_res_has_responded
+
 local uws_res_t.remote_address = uws_res_get_remote_address
 local uws_res_t.remote_address_as_text = uws_res_get_remote_address_as_text
 
-function uws_res_t:write_header(key: string, value: overload(uinteger, string)): void <inline>
-  ## if value.type.is_string then
-    uws_res_write_header(self, &key, &value)
-  ## else
-    uws_res_write_header_int(self, &key, value)
-  ## end
-end
+local uws_res_t.write_header = uws_res_write_header
+local uws_res_t.write_header_int = uws_res_write_header_int
+
+local uws_res_t.onwritable = uws_res_on_writable
+local uws_res_t.onaborted = uws_res_on_aborted
+local uws_res_t.ondata = uws_res_on_data
+
+local uws_res_t.upgrade = uws_res_upgrade

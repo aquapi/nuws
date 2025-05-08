@@ -5,11 +5,5 @@ local uws_req_t.method = uws_req_get_case_sensitive_method
 local uws_req_t.header = uws_req_get_header
 local uws_req_t.path = uws_req_get_url
 local uws_req_t.full_path = uws_req_get_full_url
-
-function uws_req_t:param(id: overload(uint16, string)): string <inline>
-  ## if idx.type.is_uint16 then
-    return uws_req_get_parameter_index(self)
-  ## else
-    return uws_req_get_parameter_name(self, &id)
-  ## end
-end
+local uws_req_t.param = uws_req_get_parameter_index
+local uws_req_t.param_by_name = uws_req_get_parameter_name

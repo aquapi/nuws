@@ -5,10 +5,12 @@ linklib(utils.lib)
 cinclude(utils.header)
 ]==]
 
-require './app.nelua'
 require './bindings.nelua'
+
+require './app.nelua'
 require './request.nelua'
 require './response.nelua'
+require './ws.nelua'
 
 local uws = @record {}
 return uws
@@ -19,3 +21,6 @@ local uws.create_app: function(): *uws.app = uws_create_app
 
 local uws.request = uws_req_t
 local uws.response = uws_res_t
+
+local uws.opcode = uws_opcode_t
+local uws.send_status = uws_sendstatus_t
