@@ -3,18 +3,11 @@ require 'string'
 
 local uws_app_t.destroy = uws_app_destroy
 local uws_app_t.close = uws_app_close
+
+local uws_app_t.listen = uws_app_listen
 local uws_app_t.run = uws_app_run
 
 local uws_app_t.ws = uws_ws
-
--- Start the server
-function uws_app_t:listen(port: integer, handler: facultative(uws_listen_handler)): void <inline>
-  ## if handler.type.is_niltype then
-    uws_app_listen(self, port, function (s: *us_listen_socket_t): void end)
-  ## else
-    uws_app_listen(self, port, handler)
-  ## end
-end
 
 -- Methods
 ## local function defmethod(method)

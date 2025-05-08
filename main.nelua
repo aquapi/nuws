@@ -24,5 +24,6 @@ local uws.response = uws_res_t
 local uws.ws = uws_websocket_t
 
 local uws.method_handler = uws_method_handler
+local uws.listen_socket = us_listen_socket_t
 
 local uws.opcode = uws_opcode_t

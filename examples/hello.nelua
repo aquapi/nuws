@@ -11,5 +11,5 @@ app:any('/*', function(res: *uws.response, req: *uws.request): void
   res:finalize('Hello')
 end)
 
-app:listen(3000)
+app:listen(3000, function (s: *uws.listen_socket): void end)
 app:run()
