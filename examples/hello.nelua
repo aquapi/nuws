@@ -2,7 +2,7 @@
   cflags '-Ofast'
 ]==]
 
-local uws = require '../lib/main.nelua'
+local uws = require '../main.nelua'
 
 local app = uws.create_app()
 

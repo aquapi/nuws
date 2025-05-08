@@ -2,7 +2,10 @@
 
 The C-API is a modified version from [`zuws`](https://github.com/harmony-co/zuws).
 
-To build the bindings:
 ```sh
+# Build the C API
 make bindings
+
+# Build examples
+make examples
 ```
