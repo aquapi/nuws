@@ -1,5 +1,5 @@
 ##[==[
-local utils = require '../lib/utils.lua'
+local utils = require './utils.lua'
 local fs = require 'nelua.utils.fs'
 
 print 'Generate bindings...'

@@ -1,26 +1,27 @@
 ##[==[
-local utils = require './utils.lua'
+local utils = require './lib/utils.lua'
 
 linklib(utils.lib)
 cinclude(utils.header)
 ]==]
 
-require './bindings.nelua'
+require './lib/bindings.nelua'
 
-require './app.nelua'
-require './request.nelua'
-require './response.nelua'
-require './ws.nelua'
+require './lib/app.nelua'
+require './lib/request.nelua'
+require './lib/response.nelua'
+require './lib/ws.nelua'
 
 local uws = @record {}
 return uws
 
 -- Aliases
 local uws.app = uws_app_t
-local uws.create_app: function(): *uws.app = uws_create_app
+local uws.create_app = uws_create_app
 
 local uws.request = uws_req_t
 local uws.response = uws_res_t
+local uws.ws = uws_websocket_t
 
 local uws.opcode = uws_opcode_t
 local uws.send_status = uws_sendstatus_t
