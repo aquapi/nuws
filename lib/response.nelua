@@ -1,9 +1,5 @@
 require './bindings.nelua'
 
-local uws_res_t.on_writable_handler = uws_res_on_writable_handler
-local uws_res_t.on_aborted_handler = uws_res_on_aborted_handler
-local uws_res_t.on_data_handler = uws_res_on_data_handler
-
 local uws_res_t.write = uws_res_write
 local uws_res_t.complete = uws_res_end_without_body
 local uws_res_t.finalize = uws_res_end

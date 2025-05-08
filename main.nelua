@@ -15,13 +15,14 @@ require './lib/ws.nelua'
 local uws = @record {}
 return uws
 
--- Aliases
-local uws.app = uws_app_t
 local uws.create_app = uws_create_app
 
+-- Alias commonly used types
+local uws.app = uws_app_t
 local uws.request = uws_req_t
 local uws.response = uws_res_t
 local uws.ws = uws_websocket_t
 
+local uws.method_handler = uws_method_handler
+
 local uws.opcode = uws_opcode_t
-local uws.send_status = uws_sendstatus_t

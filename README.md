@@ -1,3 +1,8 @@
 [`uWebSockets`](https://github.com/uNetworking/uWebSockets) bindings for Nelua.
 
-C++ bindings are from [`zuws`](https://github.com/harmony-co/zuws).
+The C-API is a modified version from [`zuws`](https://github.com/harmony-co/zuws).
+
+To build the bindings:
+```sh
+make
+```

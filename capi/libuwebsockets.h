@@ -28,8 +28,7 @@ extern "C"
     typedef struct uws_res_s uws_res_t;
     struct uws_req_s;
     typedef struct uws_req_s uws_req_t;
-    struct uws_socket_context_s;
-    typedef struct uws_socket_context_s uws_socket_context_t;
+    typedef struct us_socket_context_s uws_socket_context_t;
     struct uws_websocket_s;
     typedef struct uws_websocket_s uws_websocket_t;
 

@@ -1,7 +1,5 @@
 require './bindings.nelua'
 
-local uws_websocket_t.behavior = uws_socket_behavior_t
-
 local uws_websocket_t.close = uws_ws_close
 
 local uws_websocket_t.send = uws_ws_send

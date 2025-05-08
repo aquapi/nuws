@@ -8,7 +8,7 @@ print 'Generate bindings...'
 require('nelua.plugins.nldecl').generate_bindings_file {
   output_file = utils.bindings,
   parse_includes = {utils.header},
-  include_names = {'^uws_'}
+  include_names = {'^us_', '^uws_'}
 }
 
 print 'Patching bindings...'
