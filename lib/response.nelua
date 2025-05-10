@@ -1,4 +1,4 @@
-require './bindings.nelua'
+require('./bindings.nelua')
 
 local uws_res_t.write = uws_res_write
 local uws_res_t.complete = uws_res_end_without_body

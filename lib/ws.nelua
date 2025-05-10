@@ -1,4 +1,4 @@
-require './bindings.nelua'
+require('./bindings.nelua')
 
 local uws_websocket_t.close = uws_ws_close
 

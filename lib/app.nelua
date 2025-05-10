@@ -1,5 +1,5 @@
-require './bindings.nelua'
-require 'string'
+require('./bindings.nelua')
+require('string')
 
 local uws_app_t.destroy = uws_app_destroy
 local uws_app_t.close = uws_app_close
@@ -14,13 +14,13 @@ local uws_app_t.ws = uws_ws
 local uws_app_t.#|method|# = #|'uws_app_' .. method|#
 ## end
 
-## defmethod 'get'
-## defmethod 'post'
-## defmethod 'put'
-## defmethod 'del'
-## defmethod 'patch'
-## defmethod 'options'
-## defmethod 'head'
-## defmethod 'connect'
-## defmethod 'trace'
-## defmethod 'any'
+## defmethod('get')
+## defmethod('post')
+## defmethod('put')
+## defmethod('del')
+## defmethod('patch')
+## defmethod('options')
+## defmethod('head')
+## defmethod('connect')
+## defmethod('trace')
+## defmethod('any')

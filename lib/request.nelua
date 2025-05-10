@@ -1,4 +1,4 @@
-require './bindings.nelua'
+require('./bindings.nelua')
 
 local uws_req_t.query = uws_req_get_query
 local uws_req_t.method = uws_req_get_case_sensitive_method

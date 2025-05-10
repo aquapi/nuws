@@ -1,9 +1,4 @@
-##[==[
-  cflags '-Ofast'
-]==]
-
-local uws = require '../main.nelua'
-
+local uws = require('../main.nelua')
 local app = uws.create_app()
 
 app:any('/*', function(res: *uws.response, req: *uws.request): void
@@ -11,5 +6,7 @@ app:any('/*', function(res: *uws.response, req: *uws.request): void
   res:finalize('Hello')
 end)
 
-app:listen(3000, function (s: *uws.listen_socket): void end)
+app:listen(3000, function (s: *uws.listen_socket): void
+  if s then print('Server started at 127.0.0.1:3000') end
+end)
 app:run()
