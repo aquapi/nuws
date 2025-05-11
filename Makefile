@@ -1,7 +1,7 @@
 EXAMPLE_FILES := hello
 
 bindings:
-	cd ./capi && $(MAKE)
+	cd ./capi && $(MAKE) static
 	nelua ./lib/bindgen.nelua
 
 examples: bindings
