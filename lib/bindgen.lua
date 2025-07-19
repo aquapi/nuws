@@ -1,15 +1,14 @@
-##[==[
-local utils = require('./utils.lua')
+local utils = require('lib.utils')
 local fs = require('nelua.utils.fs')
 
 print('Generate bindings...')
 
 -- generate nelua bindings file
-require('nelua.plugins.nldecl').generate_bindings_file {
+require('nelua.plugins.nldecl').generate_bindings_file({
   output_file = utils.bindings,
-  parse_includes = {utils.header},
-  include_names = {'^us_', '^uws_'}
-}
+  parse_includes = { utils.header },
+  include_names = { '^uws_' }
+})
 
 print('Patching bindings...')
 
@@ -22,4 +21,3 @@ fs.writefile(
 )
 
 print('Binding generated at "lib/bindings.nelua"!')
-]==]
