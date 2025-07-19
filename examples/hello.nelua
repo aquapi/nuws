@@ -1,12 +1,12 @@
-local uws = require('../main.nelua')
-local app = uws.create_app()
+local nuws = require('../nuws.nelua')
+local app = nuws.create_app()
 
-app:any('/*', function(res: *uws.response, req: *uws.request): void
+app:any('/*', function(res: *nuws.response, req: *nuws.request): void
   res:write_header('Cookie', 'a=b')
   res:finalize('Hello')
 end)
 
-app:listen(3000, function (s: *uws.listen_socket): void
+app:listen(3000, function (s: *nuws.listen_socket): void
   if s then print('Server started at 127.0.0.1:3000') end
 end)
 app:run()
